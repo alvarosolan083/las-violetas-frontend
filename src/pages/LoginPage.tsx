@@ -32,7 +32,7 @@ export default function LoginPage() {
     const passwordRef = useRef<HTMLInputElement | null>(null);
 
     const [email, setEmail] = useState(() => localStorage.getItem("lv_last_email") || "admin@test.com");
-    const [password, setPassword] = useState("Admin123!");
+    const [password, setPassword] = useState("admin123");
     const [remember, setRemember] = useState(() => localStorage.getItem("lv_remember_email") === "1");
 
     const [showPassword, setShowPassword] = useState(false);

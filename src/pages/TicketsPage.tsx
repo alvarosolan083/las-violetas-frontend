@@ -1,6 +1,5 @@
 import { useMemo, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { AppShell } from "../components/AppShell";
 import { storage } from "../lib/storage";
 import { useTicketsList } from "../features/tickets/tickets.hooks";
 import type { TicketPriority, TicketStatus, TicketItem } from "../features/tickets/tickets.api";
@@ -18,11 +17,30 @@ const STATUS_OPTIONS: Array<{ label: string; value: TicketStatus | "" }> = [
 
 const PRIORITY_OPTIONS: Array<{ label: string; value: TicketPriority | "" }> = [
     { label: "Todas", value: "" },
-    { label: "Low", value: "LOW" },
-    { label: "Medium", value: "MEDIUM" },
-    { label: "High", value: "HIGH" },
-    { label: "Urgent", value: "URGENT" },
+    { label: "Baja", value: "LOW" },
+    { label: "Media", value: "MEDIUM" },
+    { label: "Alta", value: "HIGH" },
+    { label: "Urgente", value: "URGENT" },
 ];
+
+function formatStatusLabel(s: TicketStatus): string {
+    const map: Record<TicketStatus, string> = {
+        OPEN: "Abierto",
+        IN_PROGRESS: "En progreso",
+        CLOSED: "Cerrado",
+    };
+    return map[s];
+}
+
+function formatPriorityLabel(p: TicketPriority): string {
+    const map: Record<TicketPriority, string> = {
+        LOW: "Baja",
+        MEDIUM: "Media",
+        HIGH: "Alta",
+        URGENT: "Urgente",
+    };
+    return map[p];
+}
 
 export default function TicketsPage() {
     const nav = useNavigate();
@@ -99,18 +117,7 @@ export default function TicketsPage() {
     }
 
     return (
-        <AppShell
-            title="Las Violetas"
-            subtitle="Tickets"
-            right={
-                <button
-                    onClick={() => nav("/tickets/new")}
-                    className="rounded-xl bg-gradient-to-r from-sky-500 to-cyan-400 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:from-sky-400 hover:to-cyan-300 focus:outline-none focus:ring-4 focus:ring-sky-100"
-                >
-                    Crear ticket
-                </button>
-            }
-        >
+        <>
             {/* Filtros */}
             <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
                 <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
@@ -254,12 +261,12 @@ export default function TicketsPage() {
                                         <td className="px-6 py-4 text-slate-900">{t.title}</td>
                                         <td className="px-6 py-4">
                                             <span className={cn("rounded-full px-3 py-1 text-xs font-semibold", badgeStatus(t.status))}>
-                                                {t.status.replace("_", " ")}
+                                                {formatStatusLabel(t.status)}
                                             </span>
                                         </td>
                                         <td className="px-6 py-4">
                                             <span className={cn("rounded-full px-3 py-1 text-xs font-semibold", badgePriority(t.priority))}>
-                                                {t.priority ?? "—"}
+                                                {t.priority ? formatPriorityLabel(t.priority) : "—"}
                                             </span>
                                         </td>
                                         <td className="px-6 py-4 text-slate-500">
@@ -296,7 +303,7 @@ export default function TicketsPage() {
                     </button>
                 </div>
             </div>
-        </AppShell>
+        </>
     );
 }
 
